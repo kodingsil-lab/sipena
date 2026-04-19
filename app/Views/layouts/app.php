@@ -71,6 +71,7 @@ $jabatanLabel = $jabatanSession !== '' ? $jabatanSession : match ($roleRaw) {
 
         .top-shell {
             z-index: 1030;
+            animation: shellDrop .35s ease-out;
         }
 
         .top-shell.public-shell.fixed-top {
@@ -342,6 +343,7 @@ $jabatanLabel = $jabatanSession !== '' ? $jabatanSession : match ($roleRaw) {
         .page-wrap {
             padding: 172px 0 28px;
             flex: 1 0 auto;
+            animation: pageFade .35s ease-out;
         }
 
         .content-wrapper {
@@ -361,6 +363,11 @@ $jabatanLabel = $jabatanSession !== '' ? $jabatanSession : match ($roleRaw) {
 
         .page-header {
             margin-bottom: 18px;
+            background: #ffffff;
+            border: 1px solid #dbe6f3;
+            border-radius: 14px;
+            padding: 16px 18px 14px;
+            position: relative;
         }
 
         .page-title {
@@ -373,6 +380,15 @@ $jabatanLabel = $jabatanSession !== '' ? $jabatanSession : match ($roleRaw) {
         .page-subtitle {
             color: var(--text-muted);
             margin-bottom: 0;
+        }
+
+        .page-header::after {
+            content: "";
+            display: block;
+            flex-basis: 100%;
+            width: 100%;
+            margin-top: 12px;
+            border-bottom: 1px dashed #cfd8e3;
         }
 
         .public-title-hero {
@@ -461,14 +477,24 @@ $jabatanLabel = $jabatanSession !== '' ? $jabatanSession : match ($roleRaw) {
             box-shadow: 0 0 0 0.18rem rgba(52, 104, 203, 0.14);
         }
 
+        .card-clean .card-body > form.row.g-3.align-items-end > [class*="col-"]:last-child {
+            margin-left: auto;
+        }
+
+        .card-clean .card-body > form.row.g-3.align-items-end > [class*="col-"]:last-child .d-flex {
+            width: 100%;
+            justify-content: flex-end;
+        }
+
         .table-responsive {
-            border-radius: 14px;
+            border-radius: 0;
         }
 
         .table {
             margin-bottom: 0;
             color: #1e293b;
             font-size: 0.93rem;
+            border-radius: 0;
         }
 
         .table > :not(caption) > * > * {
@@ -478,14 +504,15 @@ $jabatanLabel = $jabatanSession !== '' ? $jabatanSession : match ($roleRaw) {
         }
 
         .table thead th {
-            font-size: 0.8rem;
-            font-weight: 700;
+            font-size: 0.95rem;
+            font-weight: 800;
             letter-spacing: 0.02em;
             text-transform: none;
-            color: #334155;
-            background: #f8fbff;
-            border-bottom: 1px solid #dbe6f3;
+            color: #1f2937;
+            background: #e5e7eb;
+            border-bottom: 1px solid #cbd5e1;
             white-space: nowrap;
+            border-radius: 0 !important;
         }
 
         .table tbody td {
@@ -653,8 +680,8 @@ $jabatanLabel = $jabatanSession !== '' ? $jabatanSession : match ($roleRaw) {
 
         .sipadukar-pagination .page-link {
             border-radius: 0;
-            border: 1px solid #c9d8f7;
-            color: #2956b6;
+            border: 1px solid #d7dee9;
+            color: var(--primary);
             background: #fff;
             font-weight: 500;
             font-size: 0.92rem;
@@ -668,22 +695,36 @@ $jabatanLabel = $jabatanSession !== '' ? $jabatanSession : match ($roleRaw) {
         }
 
         .sipadukar-pagination .page-link:hover {
-            background: #eef4ff;
-            border-color: #84a9f3;
-            color: #1d4ed8;
+            background: #f8fafc;
+            border-color: #cbd5e1;
+            color: var(--primary-dark);
         }
 
         .sipadukar-pagination .page-item.active .page-link {
-            background: #2f6adf;
-            border-color: #2f6adf;
+            background: var(--primary);
+            border-color: var(--primary);
             color: #fff;
             box-shadow: none;
         }
 
         .sipadukar-pagination .page-item.disabled .page-link {
             color: #94a3b8;
-            background: #f1f5f9;
-            border-color: #d8e1ee;
+            background: #fff;
+            border-color: #d7dee9;
+        }
+
+        .sipadukar-pagination .page-item:first-child .page-link,
+        .sipadukar-pagination .page-item:last-child .page-link {
+            color: #64748b;
+            background: #fff;
+            border-color: #d7dee9;
+        }
+
+        .sipadukar-pagination .page-item:first-child .page-link:hover,
+        .sipadukar-pagination .page-item:last-child .page-link:hover {
+            color: #475569;
+            background: #f8fafc;
+            border-color: #cbd5e1;
         }
 
         .sipadukar-pagination .page-item:first-child .page-link {
@@ -731,6 +772,25 @@ $jabatanLabel = $jabatanSession !== '' ? $jabatanSession : match ($roleRaw) {
 
         .heart-red {
             color: #ef4444;
+        }
+
+        @keyframes shellDrop {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pageFade {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
         }
 
         @media (max-width: 768px) {
@@ -815,6 +875,12 @@ $jabatanLabel = $jabatanSession !== '' ? $jabatanSession : match ($roleRaw) {
                 max-width: 100%;
                 padding-left: 0.75rem;
                 padding-right: 0.75rem;
+            }
+        }
+
+        @media (max-width: 767.98px) {
+            .card-clean .card-body > form.row.g-3.align-items-end > [class*="col-"]:last-child .d-flex {
+                justify-content: flex-start;
             }
         }
 
