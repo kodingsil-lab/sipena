@@ -21,6 +21,19 @@ $tanggalTtdOld = old('tanggal_ttd');
 if (! is_array($tanggalTtdOld)) {
     $tanggalTtdOld = [];
 }
+
+$prosesKeys = array_keys($prosesPenandatangan ?? []);
+$statusPublikasiAktif = (string) old('status_publikasi', $standar['status_publikasi'] ?? 'draft');
+$penandatanganLengkap = true;
+foreach ($prosesKeys as $prosesKey) {
+    $penugasanItem = $penugasanAktif[$prosesKey] ?? [];
+    $selectedUserId = (string) ($penugasanOld[$prosesKey] ?? ($penugasanItem['user_id'] ?? ''));
+    $selectedTanggal = trim((string) ($tanggalTtdOld[$prosesKey] ?? ($penugasanItem['tanggal_ttd'] ?? '')));
+    if ($selectedUserId === '' || ! preg_match('/^\d{4}-\d{2}-\d{2}$/', $selectedTanggal)) {
+        $penandatanganLengkap = false;
+        break;
+    }
+}
 ?>
 
 <div class="card card-clean">
@@ -67,10 +80,20 @@ if (! is_array($tanggalTtdOld)) {
 
                 <div class="col-md-6">
                     <label class="form-label">Status Publikasi</label>
-                    <select name="status_publikasi" class="form-select">
-                        <option value="draft" <?= old('status_publikasi', $standar['status_publikasi'] ?? 'draft') === 'draft' ? 'selected' : ''; ?>>Draf</option>
-                        <option value="publish" <?= old('status_publikasi', $standar['status_publikasi'] ?? '') === 'publish' ? 'selected' : ''; ?>>Terbit</option>
+                    <select name="status_publikasi" id="statusPublikasiSelect" class="form-select">
+                        <option value="draft" <?= $statusPublikasiAktif === 'draft' ? 'selected' : ''; ?>>Draf</option>
+                        <option
+                            value="publish"
+                            id="statusPublishOption"
+                            <?= $statusPublikasiAktif === 'publish' ? 'selected' : ''; ?>
+                            <?= $penandatanganLengkap ? '' : 'disabled'; ?>
+                        >
+                            Terbit
+                        </option>
                     </select>
+                    <small id="statusPublishGuardNote" class="text-danger <?= $penandatanganLengkap ? 'd-none' : ''; ?>">
+                        Status Terbit hanya tersedia jika seluruh penandatangan dan tanggal tanda tangan sudah diisi.
+                    </small>
                 </div>
 
                 <div class="col-12">
@@ -115,5 +138,63 @@ if (! is_array($tanggalTtdOld)) {
         </form>
     </div>
 </div>
+
+<script>
+    (function () {
+        const statusSelect = document.getElementById('statusPublikasiSelect');
+        const publishOption = document.getElementById('statusPublishOption');
+        const guardNote = document.getElementById('statusPublishGuardNote');
+        const prosesKeys = <?= json_encode($prosesKeys, JSON_UNESCAPED_UNICODE); ?>;
+
+        if (!statusSelect || !publishOption || !guardNote || !Array.isArray(prosesKeys)) {
+            return;
+        }
+
+        const isValidDate = (value) => /^\d{4}-\d{2}-\d{2}$/.test(String(value || '').trim());
+
+        const penandatanganLengkap = () => {
+            for (const prosesKey of prosesKeys) {
+                const userInput = document.querySelector(`[name="penandatangan[${prosesKey}]"]`);
+                const tanggalInput = document.querySelector(`[name="tanggal_ttd[${prosesKey}]"]`);
+
+                if (!userInput || String(userInput.value || '').trim() === '') {
+                    return false;
+                }
+
+                if (!tanggalInput || !isValidDate(tanggalInput.value)) {
+                    return false;
+                }
+            }
+
+            return true;
+        };
+
+        const updateGuardPublish = () => {
+            const lengkap = penandatanganLengkap();
+            publishOption.disabled = !lengkap;
+            guardNote.classList.toggle('d-none', lengkap);
+
+            if (!lengkap && statusSelect.value === 'publish') {
+                statusSelect.value = 'draft';
+            }
+        };
+
+        for (const prosesKey of prosesKeys) {
+            const userInput = document.querySelector(`[name="penandatangan[${prosesKey}]"]`);
+            const tanggalInput = document.querySelector(`[name="tanggal_ttd[${prosesKey}]"]`);
+
+            if (userInput) {
+                userInput.addEventListener('change', updateGuardPublish);
+            }
+
+            if (tanggalInput) {
+                tanggalInput.addEventListener('change', updateGuardPublish);
+                tanggalInput.addEventListener('input', updateGuardPublish);
+            }
+        }
+
+        updateGuardPublish();
+    })();
+</script>
 
 <?= $this->endSection(); ?>

@@ -328,6 +328,88 @@ class Dokumen extends BaseController
         }
     }
 
+    private function validasiPenandatanganTersimpanUntukPublish(int $standarId): ?string
+    {
+        if ($standarId <= 0) {
+            return 'Standar mutu tidak valid.';
+        }
+
+        $model = new PenugasanPenandatanganStandarModel();
+        $rows = $model->where('standar_mutu_id', $standarId)->findAll();
+        $penugasan = [];
+
+        foreach ($rows as $row) {
+            $proses = strtolower(trim((string) ($row['proses'] ?? '')));
+            if ($proses === '' || ! array_key_exists($proses, self::PROSES_PENANDATANGAN)) {
+                continue;
+            }
+
+            $penugasan[$proses] = [
+                'user_id' => (int) ($row['user_id'] ?? 0),
+                'tanggal_ttd' => trim((string) ($row['tanggal_ttd'] ?? '')),
+            ];
+        }
+
+        $aktifIds = array_map(
+            static fn($value) => (int) $value,
+            (new UserModel())->select('id')->where('is_active', 1)->findColumn('id') ?? []
+        );
+
+        $belumAda = [];
+        $userTidakValid = [];
+        $tanggalKosong = [];
+        $tanggalTidakValid = [];
+
+        foreach (self::PROSES_PENANDATANGAN as $key => $label) {
+            $item = $penugasan[$key] ?? null;
+            if ($item === null) {
+                $belumAda[] = $label;
+                continue;
+            }
+
+            $userId = (int) ($item['user_id'] ?? 0);
+            if ($userId <= 0) {
+                $belumAda[] = $label;
+                continue;
+            }
+
+            if (! in_array($userId, $aktifIds, true)) {
+                $userTidakValid[] = $label;
+            }
+
+            $tanggal = trim((string) ($item['tanggal_ttd'] ?? ''));
+            if ($tanggal === '') {
+                $tanggalKosong[] = $label;
+                continue;
+            }
+
+            $isFormatValid = preg_match('/^\d{4}-\d{2}-\d{2}$/', $tanggal) === 1;
+            $tanggalObj = \DateTime::createFromFormat('Y-m-d', $tanggal);
+            $isTanggalValid = $tanggalObj && $tanggalObj->format('Y-m-d') === $tanggal;
+            if (! $isFormatValid || ! $isTanggalValid) {
+                $tanggalTidakValid[] = $label;
+            }
+        }
+
+        if ($belumAda !== []) {
+            return 'Dokumen tidak dapat diterbitkan. Penandatangan belum lengkap pada proses: ' . implode(', ', $belumAda) . '.';
+        }
+
+        if ($userTidakValid !== []) {
+            return 'Dokumen tidak dapat diterbitkan. Penandatangan tidak aktif/invalid pada proses: ' . implode(', ', $userTidakValid) . '.';
+        }
+
+        if ($tanggalKosong !== []) {
+            return 'Dokumen tidak dapat diterbitkan. Tanggal tanda tangan belum diisi pada proses: ' . implode(', ', $tanggalKosong) . '.';
+        }
+
+        if ($tanggalTidakValid !== []) {
+            return 'Dokumen tidak dapat diterbitkan. Format tanggal tanda tangan tidak valid pada proses: ' . implode(', ', $tanggalTidakValid) . '.';
+        }
+
+        return null;
+    }
+
     private function getPenandatanganProsesByStandar(int $standarId): array
     {
         $assignmentModel = new PenugasanPenandatanganStandarModel();
@@ -1171,9 +1253,12 @@ class Dokumen extends BaseController
             return redirect()->back()->withInput()->with('error', 'Kode, nama, jenis, dan kategori standar wajib diisi.');
         }
 
-        $errorPenugasan = $this->validasiPenugasanPenandatangan();
-        if ($errorPenugasan !== null) {
-            return redirect()->back()->withInput()->with('error', $errorPenugasan);
+        $statusPublikasi = $this->statusFilterValue((string) $this->request->getPost('status_publikasi')) ?: 'draft';
+        if ($statusPublikasi === 'publish') {
+            $errorPenugasan = $this->validasiPenugasanPenandatangan();
+            if ($errorPenugasan !== null) {
+                return redirect()->back()->withInput()->with('error', $errorPenugasan);
+            }
         }
 
         $model = new StandarMutuModel();
@@ -1181,7 +1266,7 @@ class Dokumen extends BaseController
             'kode_standar' => $this->request->getPost('kode_standar'),
             'nama_standar' => $this->request->getPost('nama_standar'),
             'deskripsi' => $this->request->getPost('deskripsi'),
-            'status_publikasi' => $this->statusFilterValue((string) $this->request->getPost('status_publikasi')) ?: 'draft',
+            'status_publikasi' => $statusPublikasi,
             'jenis_standar_id' => (int) $this->request->getPost('jenis_standar_id'),
             'kategori_standar_id' => (int) $this->request->getPost('kategori_standar_id'),
         ]);
@@ -1254,9 +1339,12 @@ class Dokumen extends BaseController
             return redirect()->back()->withInput()->with('error', 'Kode, nama, jenis, dan kategori standar wajib diisi.');
         }
 
-        $errorPenugasan = $this->validasiPenugasanPenandatangan();
-        if ($errorPenugasan !== null) {
-            return redirect()->back()->withInput()->with('error', $errorPenugasan);
+        $statusPublikasi = $this->statusFilterValue((string) $this->request->getPost('status_publikasi')) ?: 'draft';
+        if ($statusPublikasi === 'publish') {
+            $errorPenugasan = $this->validasiPenugasanPenandatangan();
+            if ($errorPenugasan !== null) {
+                return redirect()->back()->withInput()->with('error', $errorPenugasan);
+            }
         }
 
         $model = new StandarMutuModel();
@@ -1270,7 +1358,7 @@ class Dokumen extends BaseController
             'kode_standar' => $this->request->getPost('kode_standar'),
             'nama_standar' => $this->request->getPost('nama_standar'),
             'deskripsi' => $this->request->getPost('deskripsi'),
-            'status_publikasi' => $this->statusFilterValue((string) $this->request->getPost('status_publikasi')) ?: 'draft',
+            'status_publikasi' => $statusPublikasi,
             'jenis_standar_id' => (int) $this->request->getPost('jenis_standar_id'),
             'kategori_standar_id' => (int) $this->request->getPost('kategori_standar_id'),
         ]);
@@ -1329,6 +1417,12 @@ class Dokumen extends BaseController
 
         $dokumenModel = new DokumenStandarModel();
         $payload = $this->payloadDokumenStandar($standar);
+        if (($payload['status_publikasi'] ?? 'draft') === 'publish') {
+            $errorPublish = $this->validasiPenandatanganTersimpanUntukPublish((int) $standarId);
+            if ($errorPublish !== null) {
+                return redirect()->back()->withInput()->with('error', $errorPublish);
+            }
+        }
         $payload['standar_mutu_id'] = $standarId;
         $dokumenModel->save($payload);
 
@@ -1447,6 +1541,12 @@ class Dokumen extends BaseController
         }
 
         $payload = $this->payloadDokumenStandar($standar);
+        if (($payload['status_publikasi'] ?? 'draft') === 'publish') {
+            $errorPublish = $this->validasiPenandatanganTersimpanUntukPublish((int) ($standar['id'] ?? 0));
+            if ($errorPublish !== null) {
+                return redirect()->back()->withInput()->with('error', $errorPublish);
+            }
+        }
         $changedFields = $this->fieldsDokumenStandarYangBerubah($dokumen, $payload);
 
         $this->simpanRiwayatDokumenStandar($dokumen, $changedFields);
