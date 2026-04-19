@@ -134,3 +134,5 @@ command-deploy.md
 deploy-sipena
 builds
 env
+DEPLOY_TEMPLATE.md
+*.md
