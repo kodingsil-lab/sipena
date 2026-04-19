@@ -119,9 +119,10 @@
     .dash-mini-bar > span {
         display: block;
         height: 100%;
-        width: 58%;
+        width: 30%;
         border-radius: inherit;
-        background: rgba(255, 255, 255, 0.78);
+        background: rgba(255, 255, 255, 0.86);
+        animation: heroBarSlide 2.6s ease-in-out infinite alternate;
     }
 
     .dash-grid {
@@ -245,12 +246,31 @@
         height: 100%;
         width: 100%;
         border-radius: inherit;
+        background-size: 220% 100% !important;
+        animation: shimmerBar 1.9s ease-in-out infinite alternate;
     }
 
-    .dash-card--blue .dash-progress > span { background: #3568cc; }
-    .dash-card--purple .dash-progress > span { background: #7c3aed; }
-    .dash-card--amber .dash-progress > span { background: #f59e0b; }
-    .dash-card--green .dash-progress > span { background: #10b981; }
+    .dash-card--blue .dash-progress > span { background-image: linear-gradient(90deg, #3568cc 0%, #5f86d8 50%, #3568cc 100%); }
+    .dash-card--purple .dash-progress > span { background-image: linear-gradient(90deg, #7c3aed 0%, #9b67f1 50%, #7c3aed 100%); }
+    .dash-card--amber .dash-progress > span { background-image: linear-gradient(90deg, #f59e0b 0%, #f7b84d 50%, #f59e0b 100%); }
+    .dash-card--green .dash-progress > span { background-image: linear-gradient(90deg, #10b981 0%, #43d3a7 50%, #10b981 100%); }
+
+    @keyframes shimmerBar {
+        0% { background-position: 0% 50%; }
+        100% { background-position: 100% 50%; }
+    }
+
+    @keyframes heroBarSlide {
+        from { transform: translateX(0); }
+        to { transform: translateX(178%); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .dash-mini-bar > span,
+        .dash-progress > span {
+            animation: none;
+        }
+    }
 
     .dash-percent {
         font-size: 0.84rem;
@@ -423,7 +443,7 @@ $cards = $isKepalaLpm
                     <article class="dash-card dash-card--<?= esc($card['variant']); ?>">
                         <div class="dash-card-head">
                             <span class="dash-icon-box"><i class="bi <?= esc($card['icon']); ?>"></i></span>
-                            <span class="dash-live-pill">Real-Time</span>
+                            <span class="dash-live-pill">Terbaru</span>
                         </div>
                         <p class="dash-title-label"><?= esc($card['label']); ?></p>
                         <p class="dash-main-value"><?= esc($card['value']); ?></p>
