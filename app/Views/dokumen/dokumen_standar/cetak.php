@@ -451,7 +451,7 @@ th {
 <?php if (! $modePdf): ?>
 <div class="page-actions">
     <button type="button" class="btn" onclick="window.print()">Cetak</button>
-    <button type="button" class="btn btn-secondary" onclick="window.history.back()">Kembali</button>
+    <a href="<?= esc(base_url('/dokumen-standar/detail/' . (int) ($dokumen['id'] ?? 0))); ?>" class="btn btn-secondary">Kembali</a>
 </div>
 <?php endif; ?>
 
