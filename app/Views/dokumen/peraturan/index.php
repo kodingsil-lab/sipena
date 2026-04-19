@@ -11,7 +11,7 @@
         <a href="<?= base_url('/peraturan/tambah'); ?>" class="btn btn-primary">Tambah Peraturan</a>
 
         <?php if (($kategoriAktif ?? '') !== ''): ?>
-            <a href="<?= base_url('/peraturan/tambah?kategori=' . urlencode($kategoriAktif)); ?>" class="btn btn-outline-primary">
+            <a href="<?= base_url('/peraturan/tambah?kategori=' . urlencode($kategoriAktif)); ?>" class="btn btn-secondary">
                 Tambah <?= esc($kategoriAktif); ?>
             </a>
         <?php endif; ?>
