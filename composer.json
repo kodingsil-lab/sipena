@@ -39,6 +39,8 @@
         "sort-packages": true
     },
     "scripts": {
-        "test": "phpunit"
+        "test": "phpunit",
+        "seed:clean": "php spark db:seed CleanDummySeeder",
+        "seed:full": "php spark db:seed FullDummySeeder"
     }
 }

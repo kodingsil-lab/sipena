@@ -1,54 +1,86 @@
-# Panduan Seeder Dummy SIPENA
+# Panduan Seeder SIPENA (Clear & Cepat)
 
-Dokumen ini berisi cara menjalankan **clean seed** dan **full seed** untuk data dummy modul SIPENA.
+Panduan ini untuk menjalankan seeder data realistis SIPENA.
 
-## Seeder yang tersedia
+## Tujuan Seeder
 
-- `CleanDummySeeder`
-  - Menghapus data modul secara bersih (truncate) untuk tabel:
-    - `user_penanggung_jawab_proses`
-    - `dokumen_standar`
-    - `audit_mutu_internal`
-    - `pedoman_ppepp`
-    - `kebijakan_spmi`
-    - `kebijakan_mutu`
-    - `peraturan`
-    - `standar_mutu`
-    - `profil_institusi`
-    - `users`
+1. `CleanDummySeeder`
+Menghapus data modul (truncate) pada tabel:
+`user_penanggung_jawab_proses`, `riwayat_perubahan_dokumen_standar`, `dokumen_standar`, `audit_mutu_internal`, `pedoman_ppepp`, `kebijakan_spmi`, `kebijakan_mutu`, `peraturan`, `standar_mutu`, `profil_institusi`, `users`.
 
-- `FullDummySeeder`
-  - Menjalankan `CleanDummySeeder` lalu mengisi data dummy **20 baris per modul**.
-  - Modul yang diisi:
-    - Users + Penanggung Jawab Proses
-    - Profil Institusi
-    - Standar Mutu
-    - Dokumen Standar
-    - Peraturan
-    - Kebijakan Mutu
-    - Kebijakan SPMI
-    - Pedoman PPEPP
-    - Audit Mutu Internal
+2. `FullDummySeeder`
+Menjalankan `CleanDummySeeder` lalu mengisi data realistis penuh, termasuk:
+- Standar Mutu 24 item (Pendidikan, Penelitian, Pengabdian kepada Masyarakat)
+- Dokumen Standar
+- Peraturan
+- Kebijakan Mutu
+- Kebijakan SPMI
+- Pedoman PPEPP (Dokumen + 20 SOP + 20 Formulir)
+- Audit Mutu Internal
+- Users dan profil institusi
 
-## Cara menjalankan
+## Jalankan dari Root Project
 
-Jalankan dari root project:
+Pastikan posisi terminal di:
+`C:\xampp\htdocs\sipena`
+
+## Command Paling Direkomendasikan (Windows PowerShell)
+
+```powershell
+.\scripts\seed.ps1 -Mode clean
+.\scripts\seed.ps1 -Mode full
+.\scripts\seed.ps1 -Mode reset
+```
+
+Jika Execution Policy diblokir:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\seed.ps1 -Mode full
+```
+
+## Alternatif Command
+
+1. Composer
+
+```bash
+composer seed:clean
+composer seed:full
+```
+
+2. Spark langsung
 
 ```bash
 php spark db:seed CleanDummySeeder
-```
-
-Untuk isi data dummy lengkap:
-
-```bash
 php spark db:seed FullDummySeeder
 ```
 
-> Catatan: `FullDummySeeder` sudah otomatis membersihkan data terlebih dahulu.
+3. Linux/macOS (Bash script)
 
-## Akun login dummy default
+```bash
+bash scripts/seed.sh clean
+bash scripts/seed.sh full
+bash scripts/seed.sh reset
+```
 
-Setelah `FullDummySeeder`, akun admin default:
+## Catatan Penting
+
+1. `full` sudah otomatis melakukan clean dulu.
+2. Gunakan `reset` jika ingin eksplisit clean lalu full.
+3. Untuk PowerShell, selalu gunakan prefix `.\` saat memanggil script lokal.
+4. Jangan pakai titik di belakang nama file script (contoh salah: `.\scripts\seed.ps1.`).
+
+## Troubleshooting PowerShell
+
+Jika muncul pesan:
+`The command scripts/seed.ps1 was not found ... type: ".\scripts/seed.ps1"`
+
+Solusi:
+
+```powershell
+.\scripts\seed.ps1 -Mode full
+```
+
+## Akun Login Default Setelah Full Seed
 
 - Username: `admin`
 - Password: `password123`

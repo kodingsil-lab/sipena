@@ -11,6 +11,7 @@ class CleanDummySeeder extends Seeder
      */
     private array $tables = [
         'user_penanggung_jawab_proses',
+        'penugasan_penandatangan_standar',
         'riwayat_perubahan_dokumen_standar',
         'dokumen_standar',
         'audit_mutu_internal',
