@@ -24,7 +24,7 @@
                     <label class="form-label">Cari Dokumen</label>
                     <input type="text" name="keyword" value="<?= esc($keyword ?? ''); ?>" class="form-control" placeholder="Ketik nomor atau judul dokumen...">
                 </div>
-                <div class="col-md-4 d-flex gap-2">
+                <div class="col-md-4 d-flex gap-2 justify-content-md-end">
                     <button type="submit" class="btn btn-primary">Terapkan</button>
                     <a href="<?= current_url(); ?>" class="btn btn-secondary">Reset</a>
                 </div>
