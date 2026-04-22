@@ -61,7 +61,7 @@ CI_ENVIRONMENT = production
 app.baseURL = 'https://sipena.demo.sil.web.id/'
 app.forceGlobalSecureRequests = true
 app.indexPage = ''
-app.CSPEnabled = false
+app.CSPEnabled = true
 
 database.default.hostname = localhost
 database.default.database = DB_NAME
@@ -99,7 +99,14 @@ curl -I "$DOMAIN_URL"
 
 ## 3) Deploy Rutin (Update Kode)
 
+Jalankan blok ini utuh di setiap sesi shell (aman untuk copy-paste):
+
 ```bash
+APP_BASE=/home/loaunisa/apps/sipena
+SRC_DIR=$APP_BASE/sipena-app-src
+
+[ -d "$SRC_DIR/.git" ] || { echo "Repo tidak ditemukan di $SRC_DIR"; exit 1; }
+
 cd "$SRC_DIR"
 git pull origin main
 RUN_SEEDERS=0 RUN_MIGRATIONS=1 bash ./scripts/sipena.sh
@@ -108,6 +115,11 @@ RUN_SEEDERS=0 RUN_MIGRATIONS=1 bash ./scripts/sipena.sh
 Jika database sudah final dan tidak mau ubah skema:
 
 ```bash
+APP_BASE=/home/loaunisa/apps/sipena
+SRC_DIR=$APP_BASE/sipena-app-src
+
+[ -d "$SRC_DIR/.git" ] || { echo "Repo tidak ditemukan di $SRC_DIR"; exit 1; }
+
 cd "$SRC_DIR"
 git pull origin main
 RUN_SEEDERS=0 RUN_MIGRATIONS=0 bash ./scripts/sipena.sh

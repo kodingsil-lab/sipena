@@ -24,11 +24,13 @@ class Auth extends BaseController
         $usernameInput = strtolower(trim((string) $this->request->getPost('username')));
         $usernameKey = $usernameInput !== '' ? $usernameInput : 'unknown';
         $throttler = Services::throttler();
+        $ipUserKey = 'login-ip-user:' . sha1($ipAddress . '|' . $usernameKey);
+        $ipKey = 'login-ip:' . sha1($ipAddress);
 
         // 5 attempts per 15 minutes per IP+username and 30 attempts per 15 minutes per IP.
         if (
-            ! $throttler->check('login-ip-user:' . $ipAddress . ':' . $usernameKey, 5, MINUTE * 15)
-            || ! $throttler->check('login-ip:' . $ipAddress, 30, MINUTE * 15)
+            ! $throttler->check($ipUserKey, 5, MINUTE * 15)
+            || ! $throttler->check($ipKey, 30, MINUTE * 15)
         ) {
             return redirect()->back()->withInput()->with(
                 'error',
