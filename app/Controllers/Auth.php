@@ -24,8 +24,8 @@ class Auth extends BaseController
         $usernameInput = strtolower(trim((string) $this->request->getPost('username')));
         $usernameKey = $usernameInput !== '' ? $usernameInput : 'unknown';
         $throttler = Services::throttler();
-        $ipUserKey = 'login-ip-user:' . sha1($ipAddress . '|' . $usernameKey);
-        $ipKey = 'login-ip:' . sha1($ipAddress);
+        $ipUserKey = 'login_ip_user_' . sha1($ipAddress . '|' . $usernameKey);
+        $ipKey = 'login_ip_' . sha1($ipAddress);
 
         // 5 attempts per 15 minutes per IP+username and 30 attempts per 15 minutes per IP.
         if (
