@@ -89,6 +89,9 @@ php composer.phar --version
 ```bash
 cd "$SRC_DIR"
 RUN_SEEDERS=0 RUN_MIGRATIONS=1 bash ./scripts/sipena.sh
+
+cd "$APP_ROOT"
+php spark cache:clear
 ```
 
 ### 2.6 Verifikasi online
@@ -104,12 +107,16 @@ Jalankan blok ini utuh di setiap sesi shell (aman untuk copy-paste):
 ```bash
 APP_BASE=/home/loaunisa/apps/sipena
 SRC_DIR=$APP_BASE/sipena-app-src
+APP_ROOT=$APP_BASE/sipena-app
 
 [ -d "$SRC_DIR/.git" ] || { echo "Repo tidak ditemukan di $SRC_DIR"; exit 1; }
 
 cd "$SRC_DIR"
 git pull origin main
 RUN_SEEDERS=0 RUN_MIGRATIONS=1 bash ./scripts/sipena.sh
+
+cd "$APP_ROOT"
+php spark cache:clear
 ```
 
 Jika database sudah final dan tidak mau ubah skema:
@@ -117,20 +124,62 @@ Jika database sudah final dan tidak mau ubah skema:
 ```bash
 APP_BASE=/home/loaunisa/apps/sipena
 SRC_DIR=$APP_BASE/sipena-app-src
+APP_ROOT=$APP_BASE/sipena-app
 
 [ -d "$SRC_DIR/.git" ] || { echo "Repo tidak ditemukan di $SRC_DIR"; exit 1; }
 
 cd "$SRC_DIR"
 git pull origin main
 RUN_SEEDERS=0 RUN_MIGRATIONS=0 bash ./scripts/sipena.sh
+
+cd "$APP_ROOT"
+php spark cache:clear
 ```
 
 ## 4) Catatan Penting
 
 - Jalankan script deploy dari `SRC_DIR`, bukan dari `APP_ROOT`.
+- Jalankan `php spark ...` dari `APP_ROOT`, bukan dari `SRC_DIR`.
 - Jika error `Composer tidak ditemukan`, pastikan `composer.phar` ada di `SRC_DIR`.
 - Jika server tidak punya `rsync`, script akan fallback ke metode `tar`.
 - Jangan aktifkan seeder di production kecuali benar-benar diperlukan.
+
+## 8) Troubleshooting Umum Cepat
+
+### 8.1 `fatal: not a git repository`
+
+```bash
+APP_BASE=/home/loaunisa/apps/sipena
+SRC_DIR=$APP_BASE/sipena-app-src
+
+echo "SRC_DIR=$SRC_DIR"
+ls -la "$SRC_DIR"
+```
+
+Jika folder tidak ada:
+
+```bash
+mkdir -p "$APP_BASE"
+git clone https://github.com/kodingsil-lab/sipena.git "$SRC_DIR"
+```
+
+### 8.2 `No such file or directory: ./scripts/sipena.sh`
+
+Pastikan kamu sedang di `SRC_DIR`:
+
+```bash
+cd "$SRC_DIR"
+ls -la scripts/sipena.sh
+```
+
+### 8.3 `Failed opening ... vendor/codeigniter4/framework/system/Boot.php` saat `php spark`
+
+Biasanya karena menjalankan `php spark` di `SRC_DIR`. Jalankan dari `APP_ROOT`:
+
+```bash
+cd "$APP_ROOT"
+php spark
+```
 
 ## 5) Cek Log Saat Error 500/Blank
 
