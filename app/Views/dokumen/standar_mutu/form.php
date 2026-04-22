@@ -44,7 +44,16 @@ foreach ($prosesKeys as $prosesKey) {
             <div class="row g-3">
                 <div class="col-md-6">
                     <label class="form-label">Kode Standar</label>
-                    <input type="text" name="kode_standar" class="form-control" value="<?= esc(old('kode_standar', $standar['kode_standar'] ?? '')); ?>" required>
+                    <input
+                        type="text"
+                        name="kode_standar"
+                        id="kodeStandarInput"
+                        class="form-control"
+                        value="<?= esc(old('kode_standar', $standar['kode_standar'] ?? '')); ?>"
+                        readonly
+                        placeholder="Kode standar akan diisi otomatis setelah pilih jenis"
+                        required
+                    >
                 </div>
 
                 <div class="col-md-6">
@@ -141,10 +150,33 @@ foreach ($prosesKeys as $prosesKey) {
 
 <script>
     (function () {
+        const nextKodeStandarByJenis = <?= json_encode($nextKodeStandarByJenis ?? [], JSON_UNESCAPED_UNICODE); ?>;
+        const isNewStandar = <?= empty($standar) ? 'true' : 'false'; ?>;
+        const kodeStandarInput = document.getElementById('kodeStandarInput');
+        const jenisStandarSelect = document.querySelector('[name="jenis_standar_id"]');
         const statusSelect = document.getElementById('statusPublikasiSelect');
         const publishOption = document.getElementById('statusPublishOption');
         const guardNote = document.getElementById('statusPublishGuardNote');
         const prosesKeys = <?= json_encode($prosesKeys, JSON_UNESCAPED_UNICODE); ?>;
+
+        const updateKodeStandar = () => {
+            if (!kodeStandarInput || !jenisStandarSelect || !isNewStandar) {
+                return;
+            }
+
+            const jenisId = jenisStandarSelect.value;
+            if (!jenisId || !Object.prototype.hasOwnProperty.call(nextKodeStandarByJenis, jenisId)) {
+                kodeStandarInput.value = '';
+                return;
+            }
+
+            kodeStandarInput.value = nextKodeStandarByJenis[jenisId];
+        };
+
+        if (jenisStandarSelect) {
+            jenisStandarSelect.addEventListener('change', updateKodeStandar);
+            updateKodeStandar();
+        }
 
         if (!statusSelect || !publishOption || !guardNote || !Array.isArray(prosesKeys)) {
             return;

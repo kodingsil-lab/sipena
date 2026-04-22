@@ -18,16 +18,30 @@
 
     <div class="card card-clean mb-4">
         <div class="card-body p-4">
-            <div class="row g-4">
-                <div class="col-md-4"><label class="form-label fw-bold">Kode Standar</label><div><?= esc($standar['kode_standar'] ?? '-'); ?></div></div>
-                <div class="col-md-8"><label class="form-label fw-bold">Nama Standar</label><div><?= esc($standar['nama_standar'] ?? '-'); ?></div></div>
-                <div class="col-md-4"><label class="form-label fw-bold">Kode Dokumen</label><div><?= esc($dokumen['kode_dokumen'] ?? '-'); ?></div></div>
-                <div class="col-md-3"><label class="form-label fw-bold">Tanggal</label><div><?= esc($dokumen['tanggal_dokumen'] ?? '-'); ?></div></div>
-                <div class="col-md-2"><label class="form-label fw-bold">Revisi</label><div><?= esc($dokumen['revisi'] ?? '-'); ?></div></div>
-                <div class="col-md-3"><label class="form-label fw-bold">Halaman</label><div><?= esc($dokumen['halaman'] ?? '-'); ?></div></div>
-                <div class="col-md-4">
-                    <label class="form-label fw-bold">Status</label>
-                    <div>
+            <div class="public-detail-box">
+                <div class="public-detail-row">
+                    <div class="public-detail-label">Kode Standar</div>
+                    <div class="public-detail-value">: <?= esc($standar['kode_standar'] ?? '-'); ?></div>
+                </div>
+                <div class="public-detail-row">
+                    <div class="public-detail-label">Nama Standar</div>
+                    <div class="public-detail-value">: <?= esc($standar['nama_standar'] ?? '-'); ?></div>
+                </div>
+                <div class="public-detail-row">
+                    <div class="public-detail-label">Tanggal</div>
+                    <div class="public-detail-value">: <?= esc($dokumen['tanggal_dokumen'] ?? '-'); ?></div>
+                </div>
+                <div class="public-detail-row">
+                    <div class="public-detail-label">Revisi</div>
+                    <div class="public-detail-value">: <?= esc($dokumen['revisi'] ?? '-'); ?></div>
+                </div>
+                <div class="public-detail-row">
+                    <div class="public-detail-label">Halaman</div>
+                    <div class="public-detail-value">: <?= esc($dokumen['halaman'] ?? '-'); ?></div>
+                </div>
+                <div class="public-detail-row">
+                    <div class="public-detail-label">Status</div>
+                    <div class="public-detail-value">:
                         <span class="badge bg-success-subtle text-success border border-success-subtle fw-semibold px-3 py-2">
                             <i class="bi bi-check-circle-fill me-1"></i> Terbit
                         </span>
@@ -42,10 +56,10 @@
             <h5 class="public-section-title">Data Institusi</h5>
             <div class="mb-3"><strong>Nama Institusi:</strong><br><?= esc($profil['nama_institusi'] ?? '-'); ?></div>
             <div class="mb-3"><strong>Singkatan:</strong><br><?= esc($profil['singkatan_institusi'] ?? '-'); ?></div>
-            <div class="mb-3"><strong>Visi:</strong><br><?= ($profil['visi'] ?? '') !== '' ? $profil['visi'] : '-'; ?></div>
-            <div class="mb-3"><strong>Misi:</strong><br><?= ($profil['misi'] ?? '') !== '' ? $profil['misi'] : '-'; ?></div>
-            <div class="mb-3"><strong>Tujuan:</strong><br><?= ($profil['tujuan'] ?? '') !== '' ? $profil['tujuan'] : '-'; ?></div>
-            <div class="mb-0"><strong>Sasaran:</strong><br><?= ($profil['sasaran'] ?? '') !== '' ? $profil['sasaran'] : '-'; ?></div>
+            <div class="mb-3"><strong>Visi:</strong><br><?= ($profil['visi'] ?? '') !== '' ? sanitize_allowed_html($profil['visi'], 'profil') : '-'; ?></div>
+            <div class="mb-3"><strong>Misi:</strong><br><?= ($profil['misi'] ?? '') !== '' ? sanitize_allowed_html($profil['misi'], 'profil') : '-'; ?></div>
+            <div class="mb-3"><strong>Tujuan:</strong><br><?= ($profil['tujuan'] ?? '') !== '' ? sanitize_allowed_html($profil['tujuan'], 'profil') : '-'; ?></div>
+            <div class="mb-0"><strong>Sasaran:</strong><br><?= ($profil['sasaran'] ?? '') !== '' ? sanitize_allowed_html($profil['sasaran'], 'profil') : '-'; ?></div>
         </div>
     </div>
 
@@ -97,14 +111,14 @@
     <div class="card card-clean">
         <div class="card-body p-4">
             <h5 class="public-section-title">Konten Dokumen Standar</h5>
-            <div class="mb-4"><label class="form-label fw-bold">Rasional</label><div class="public-content-box"><?= $dokumen['rasional']; ?></div></div>
-            <div class="mb-4"><label class="form-label fw-bold">Subjek / Pihak yang Bertanggung Jawab</label><div class="public-content-box"><?= $dokumen['subjek_bertanggung_jawab']; ?></div></div>
-            <div class="mb-4"><label class="form-label fw-bold">Definisi Istilah</label><div class="public-content-box"><?= $dokumen['definisi_istilah']; ?></div></div>
-            <div class="mb-4"><label class="form-label fw-bold">Pernyataan Isi Standar</label><div class="public-content-box"><?= $dokumen['pernyataan_isi_standar']; ?></div></div>
-            <div class="mb-4"><label class="form-label fw-bold">Indikator Ketercapaian</label><div class="public-content-box"><?= $dokumen['indikator_ketercapaian']; ?></div></div>
-            <div class="mb-4"><label class="form-label fw-bold">Strategi Pencapaian</label><div class="public-content-box"><?= $dokumen['strategi_pencapaian']; ?></div></div>
-            <div class="mb-4"><label class="form-label fw-bold">Dokumen Terkait</label><div class="public-content-box"><?= $dokumen['dokumen_terkait']; ?></div></div>
-            <div class="mb-0"><label class="form-label fw-bold">Referensi</label><div class="public-content-box"><?= $dokumen['referensi']; ?></div></div>
+            <div class="mb-4"><label class="form-label fw-bold">Rasional</label><div class="public-content-box"><?= sanitize_allowed_html($dokumen['rasional'] ?? '', 'dokumen'); ?></div></div>
+            <div class="mb-4"><label class="form-label fw-bold">Subjek / Pihak yang Bertanggung Jawab</label><div class="public-content-box"><?= sanitize_allowed_html($dokumen['subjek_bertanggung_jawab'] ?? '', 'dokumen'); ?></div></div>
+            <div class="mb-4"><label class="form-label fw-bold">Definisi Istilah</label><div class="public-content-box"><?= sanitize_allowed_html($dokumen['definisi_istilah'] ?? '', 'dokumen'); ?></div></div>
+            <div class="mb-4"><label class="form-label fw-bold">Pernyataan Isi Standar</label><div class="public-content-box"><?= sanitize_allowed_html($dokumen['pernyataan_isi_standar'] ?? '', 'dokumen'); ?></div></div>
+            <div class="mb-4"><label class="form-label fw-bold">Indikator Ketercapaian</label><div class="public-content-box"><?= sanitize_allowed_html($dokumen['indikator_ketercapaian'] ?? '', 'dokumen'); ?></div></div>
+            <div class="mb-4"><label class="form-label fw-bold">Strategi Pencapaian</label><div class="public-content-box"><?= sanitize_allowed_html($dokumen['strategi_pencapaian'] ?? '', 'dokumen'); ?></div></div>
+            <div class="mb-4"><label class="form-label fw-bold">Dokumen Terkait</label><div class="public-content-box"><?= sanitize_allowed_html($dokumen['dokumen_terkait'] ?? '', 'dokumen'); ?></div></div>
+            <div class="mb-0"><label class="form-label fw-bold">Referensi</label><div class="public-content-box"><?= sanitize_allowed_html($dokumen['referensi'] ?? '', 'dokumen'); ?></div></div>
         </div>
     </div>
 </div>
@@ -131,6 +145,36 @@
         background: #f8fbff;
         color: #334155;
         font-weight: 700;
+    }
+
+    .public-detail-box {
+        border: 1px solid #e5e7eb;
+        border-radius: 0.75rem;
+        overflow: hidden;
+        background: #ffffff;
+    }
+
+    .public-detail-row {
+        display: grid;
+        grid-template-columns: 180px minmax(0, 1fr);
+        gap: 0.75rem;
+        align-items: center;
+        padding: 0.95rem 1rem;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .public-detail-row:last-child {
+        border-bottom: none;
+    }
+
+    .public-detail-label {
+        color: #334155;
+        font-weight: 700;
+    }
+
+    .public-detail-value {
+        color: #0f172a;
+        font-weight: 500;
     }
 
     .public-content-box {

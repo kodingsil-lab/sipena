@@ -169,3 +169,30 @@ if (! function_exists('app_color_shade')) {
         return sprintf('#%02X%02X%02X', $r, $g, $b);
     }
 }
+
+if (! function_exists('sanitize_allowed_html')) {
+    function sanitize_allowed_html(?string $input, string $context = 'dokumen'): string
+    {
+        $raw = (string) $input;
+        if (trim($raw) === '') {
+            return '';
+        }
+
+        $allowedTags = match ($context) {
+            'profil' => '<p><br><ol><ul><li><strong><em><b><i>',
+            default => '<p><br><ol><ul><li><strong><b><em><i><u><blockquote><table><thead><tbody><tr><th><td><h1><h2><h3><h4><h5><h6>',
+        };
+
+        $clean = trim((string) strip_tags($raw, $allowedTags));
+
+        $allowedTagNames = $context === 'profil'
+            ? '(p|br|ol|ul|li|strong|em|b|i)'
+            : '(p|br|ol|ul|li|strong|b|em|i|u|blockquote|table|thead|tbody|tr|th|td|h[1-6])';
+
+        return preg_replace(
+            '/<(\/?)' . $allowedTagNames . '(?:\s+[^>]*)?>/i',
+            '<$1$2>',
+            $clean
+        ) ?? '';
+    }
+}

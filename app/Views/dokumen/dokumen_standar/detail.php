@@ -64,10 +64,10 @@
         <h5 class="mb-3">Data Institusi</h5>
         <div class="mb-3"><strong>Nama Institusi:</strong><br><?= esc($profil['nama_institusi'] ?? '-'); ?></div>
         <div class="mb-3"><strong>Singkatan:</strong><br><?= esc($profil['singkatan_institusi'] ?? '-'); ?></div>
-        <div class="mb-3"><strong>Visi:</strong><br><?= ($profil['visi'] ?? '') !== '' ? $profil['visi'] : '-'; ?></div>
-        <div class="mb-3"><strong>Misi:</strong><br><?= ($profil['misi'] ?? '') !== '' ? $profil['misi'] : '-'; ?></div>
-        <div class="mb-3"><strong>Tujuan:</strong><br><?= ($profil['tujuan'] ?? '') !== '' ? $profil['tujuan'] : '-'; ?></div>
-        <div class="mb-0"><strong>Sasaran:</strong><br><?= ($profil['sasaran'] ?? '') !== '' ? $profil['sasaran'] : '-'; ?></div>
+        <div class="mb-3"><strong>Visi:</strong><br><?= ($profil['visi'] ?? '') !== '' ? sanitize_allowed_html($profil['visi'], 'profil') : '-'; ?></div>
+        <div class="mb-3"><strong>Misi:</strong><br><?= ($profil['misi'] ?? '') !== '' ? sanitize_allowed_html($profil['misi'], 'profil') : '-'; ?></div>
+        <div class="mb-3"><strong>Tujuan:</strong><br><?= ($profil['tujuan'] ?? '') !== '' ? sanitize_allowed_html($profil['tujuan'], 'profil') : '-'; ?></div>
+        <div class="mb-0"><strong>Sasaran:</strong><br><?= ($profil['sasaran'] ?? '') !== '' ? sanitize_allowed_html($profil['sasaran'], 'profil') : '-'; ?></div>
     </div>
 </div>
 <div class="card card-clean mb-4">
@@ -117,42 +117,42 @@
     <div class="card-body p-4">
         <div class="mb-4">
             <label class="form-label fw-bold">Rasional</label>
-            <div class="border rounded-3 p-3 bg-light"><?= $dokumen['rasional']; ?></div>
+            <div class="border rounded-3 p-3 bg-light"><?= sanitize_allowed_html($dokumen['rasional'] ?? '', 'dokumen'); ?></div>
         </div>
 
         <div class="mb-4">
             <label class="form-label fw-bold">Subjek / Pihak yang Bertanggung Jawab</label>
-            <div class="border rounded-3 p-3 bg-light"><?= $dokumen['subjek_bertanggung_jawab']; ?></div>
+            <div class="border rounded-3 p-3 bg-light"><?= sanitize_allowed_html($dokumen['subjek_bertanggung_jawab'] ?? '', 'dokumen'); ?></div>
         </div>
 
         <div class="mb-4">
             <label class="form-label fw-bold">Definisi Istilah</label>
-            <div class="border rounded-3 p-3 bg-light"><?= $dokumen['definisi_istilah']; ?></div>
+            <div class="border rounded-3 p-3 bg-light"><?= sanitize_allowed_html($dokumen['definisi_istilah'] ?? '', 'dokumen'); ?></div>
         </div>
 
         <div class="mb-4">
             <label class="form-label fw-bold">Pernyataan Isi Standar</label>
-            <div class="border rounded-3 p-3 bg-light"><?= $dokumen['pernyataan_isi_standar']; ?></div>
+            <div class="border rounded-3 p-3 bg-light"><?= sanitize_allowed_html($dokumen['pernyataan_isi_standar'] ?? '', 'dokumen'); ?></div>
         </div>
 
         <div class="mb-4">
             <label class="form-label fw-bold">Indikator Ketercapaian</label>
-            <div class="border rounded-3 p-3 bg-light"><?= $dokumen['indikator_ketercapaian']; ?></div>
+            <div class="border rounded-3 p-3 bg-light"><?= sanitize_allowed_html($dokumen['indikator_ketercapaian'] ?? '', 'dokumen'); ?></div>
         </div>
 
         <div class="mb-4">
             <label class="form-label fw-bold">Strategi Pencapaian</label>
-            <div class="border rounded-3 p-3 bg-light"><?= $dokumen['strategi_pencapaian']; ?></div>
+            <div class="border rounded-3 p-3 bg-light"><?= sanitize_allowed_html($dokumen['strategi_pencapaian'] ?? '', 'dokumen'); ?></div>
         </div>
 
         <div class="mb-4">
             <label class="form-label fw-bold">Dokumen Terkait</label>
-            <div class="border rounded-3 p-3 bg-light"><?= $dokumen['dokumen_terkait']; ?></div>
+            <div class="border rounded-3 p-3 bg-light"><?= sanitize_allowed_html($dokumen['dokumen_terkait'] ?? '', 'dokumen'); ?></div>
         </div>
 
         <div class="mb-0">
             <label class="form-label fw-bold">Referensi</label>
-            <div class="border rounded-3 p-3 bg-light"><?= $dokumen['referensi']; ?></div>
+            <div class="border rounded-3 p-3 bg-light"><?= sanitize_allowed_html($dokumen['referensi'] ?? '', 'dokumen'); ?></div>
         </div>
     </div>
 </div>

@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\UserModel;
+use Config\Services;
 
 class Auth extends BaseController
 {
@@ -19,6 +20,22 @@ class Auth extends BaseController
 
     public function attemptLogin()
     {
+        $ipAddress = (string) $this->request->getIPAddress();
+        $usernameInput = strtolower(trim((string) $this->request->getPost('username')));
+        $usernameKey = $usernameInput !== '' ? $usernameInput : 'unknown';
+        $throttler = Services::throttler();
+
+        // 5 attempts per 15 minutes per IP+username and 30 attempts per 15 minutes per IP.
+        if (
+            ! $throttler->check('login-ip-user:' . $ipAddress . ':' . $usernameKey, 5, MINUTE * 15)
+            || ! $throttler->check('login-ip:' . $ipAddress, 30, MINUTE * 15)
+        ) {
+            return redirect()->back()->withInput()->with(
+                'error',
+                'Terlalu banyak percobaan login. Silakan coba lagi dalam 15 menit.'
+            );
+        }
+
         $rules = [
             'username' => 'required',
             'password' => 'required',

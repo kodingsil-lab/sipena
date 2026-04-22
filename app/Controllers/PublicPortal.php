@@ -184,7 +184,7 @@ class PublicPortal extends BaseController
         $kategoriStandarId = (int) $this->request->getGet('kategori_standar_id');
 
         $builder = (new DokumenStandarModel())
-            ->select('dokumen_standar.id, dokumen_standar.kode_dokumen, dokumen_standar.status_publikasi, dokumen_standar.updated_at, dokumen_standar.created_at, standar_mutu.nama_standar, master_jenis_standar.nama_jenis, master_kategori_standar.nama_kategori')
+            ->select('dokumen_standar.id, dokumen_standar.kode_dokumen, standar_mutu.kode_standar, dokumen_standar.status_publikasi, dokumen_standar.updated_at, dokumen_standar.created_at, standar_mutu.nama_standar, master_jenis_standar.nama_jenis, master_kategori_standar.nama_kategori')
             ->join('standar_mutu', 'standar_mutu.id = dokumen_standar.standar_mutu_id', 'left')
             ->join('master_jenis_standar', 'master_jenis_standar.id = standar_mutu.jenis_standar_id', 'left')
             ->join('master_kategori_standar', 'master_kategori_standar.id = standar_mutu.kategori_standar_id', 'left')
@@ -201,7 +201,7 @@ class PublicPortal extends BaseController
         $standarList = array_map(function (array $row): array {
             $updatedAt = $row['updated_at'] ?? $row['created_at'] ?? null;
             return [
-                'nomor' => trim((string) ($row['kode_dokumen'] ?? '')) ?: '-',
+                'nomor' => trim((string) ($row['kode_standar'] ?? $row['kode_dokumen'] ?? '')) ?: '-',
                 'judul' => trim((string) ($row['nama_standar'] ?? '-')) ?: '-',
                 'jenis' => trim((string) ($row['nama_jenis'] ?? '')) ?: '-',
                 'kategori' => trim((string) ($row['nama_kategori'] ?? '')) ?: '-',
@@ -376,7 +376,7 @@ class PublicPortal extends BaseController
 
         $model = new DokumenStandarModel();
         $builder = $model
-            ->select('dokumen_standar.id, dokumen_standar.kode_dokumen, dokumen_standar.status_publikasi, dokumen_standar.updated_at, dokumen_standar.created_at, standar_mutu.nama_standar, master_jenis_standar.nama_jenis, master_kategori_standar.nama_kategori')
+            ->select('dokumen_standar.id, dokumen_standar.kode_dokumen, standar_mutu.kode_standar, dokumen_standar.status_publikasi, dokumen_standar.updated_at, dokumen_standar.created_at, standar_mutu.nama_standar, master_jenis_standar.nama_jenis, master_kategori_standar.nama_kategori')
             ->join('standar_mutu', 'standar_mutu.id = dokumen_standar.standar_mutu_id', 'left')
             ->join('master_jenis_standar', 'master_jenis_standar.id = standar_mutu.jenis_standar_id', 'left')
             ->join('master_kategori_standar', 'master_kategori_standar.id = standar_mutu.kategori_standar_id', 'left')
@@ -395,7 +395,7 @@ class PublicPortal extends BaseController
 
         $rows = array_map(function (array $item): array {
             return [
-                'nomor' => trim((string) ($item['kode_dokumen'] ?? '')) ?: '-',
+                'nomor' => trim((string) ($item['kode_standar'] ?? $item['kode_dokumen'] ?? '')) ?: '-',
                 'judul' => trim((string) ($item['nama_standar'] ?? '')) ?: '-',
                 'jenis' => trim((string) ($item['nama_jenis'] ?? '')) ?: '-',
                 'kategori' => trim((string) ($item['nama_kategori'] ?? '')) ?: '-',

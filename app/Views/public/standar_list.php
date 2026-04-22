@@ -52,7 +52,7 @@
                 <thead>
                     <tr>
                         <th style="width:70px;">No.</th>
-                        <th style="min-width:140px;">Nomor</th>
+                        <th style="min-width:140px;">Kode Standar</th>
                         <th style="min-width:240px;">Judul Dokumen</th>
                         <th style="min-width:180px;">Jenis Standar</th>
                         <th style="min-width:180px;">Kategori</th>

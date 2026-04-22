@@ -150,6 +150,46 @@ class Dokumen extends BaseController
         };
     }
 
+    private function getStandarMutuPrefixByJenis(string $namaJenis): string
+    {
+        $lower = strtolower(trim($namaJenis));
+        if ($lower === 'pendidikan') {
+            return 'P';
+        }
+
+        if ($lower === 'penelitian') {
+            return 'PN';
+        }
+
+        if (str_contains($lower, 'pengabdian')) {
+            return 'PKM';
+        }
+
+        return '';
+    }
+
+    private function generateNextStandarMutuKode(int $jenisStandarId, string $namaJenis): string
+    {
+        $prefix = $this->getStandarMutuPrefixByJenis($namaJenis);
+        if ($prefix === '') {
+            return '';
+        }
+
+        $model = new StandarMutuModel();
+        $existing = $model->select('kode_standar')->where('jenis_standar_id', $jenisStandarId)->findAll();
+        $maxNumber = 0;
+
+        foreach ($existing as $row) {
+            $kode = trim((string) ($row['kode_standar'] ?? ''));
+            if (preg_match('/^STD-' . preg_quote($prefix, '/') . '-(\d+)$/i', $kode, $matches)) {
+                $number = (int) $matches[1];
+                $maxNumber = max($maxNumber, $number);
+            }
+        }
+
+        return sprintf('STD-%s-%02d', $prefix, $maxNumber + 1);
+    }
+
     private function roleLabel(?string $role): string
     {
         $map = [
@@ -1226,24 +1266,30 @@ class Dokumen extends BaseController
         $kategoriModel = new KategoriStandarModel();
         $userModel = new UserModel();
 
+        $daftarJenis = $jenisModel->where('is_aktif', 1)->orderBy('nama_jenis', 'ASC')->findAll();
+        $nextKodeStandarByJenis = [];
+        foreach ($daftarJenis as $jenis) {
+            $nextKodeStandarByJenis[(int) ($jenis['id'] ?? 0)] = $this->generateNextStandarMutuKode((int) ($jenis['id'] ?? 0), (string) ($jenis['nama_jenis'] ?? ''));
+        }
+
         return view('dokumen/standar_mutu/form', [
             'title' => 'Tambah Standar Mutu',
             'pageTitle' => 'Tambah Standar Mutu',
             'pageDesc' => 'Form input data standar mutu.',
             'standar' => null,
             'action' => base_url('/standar-mutu/simpan'),
-            'daftarJenis' => $jenisModel->where('is_aktif', 1)->orderBy('nama_jenis', 'ASC')->findAll(),
+            'daftarJenis' => $daftarJenis,
             'daftarKategori' => $kategoriModel->where('is_aktif', 1)->orderBy('nama_kategori', 'ASC')->findAll(),
             'daftarUserAktif' => $userModel->where('is_active', 1)->orderBy('nama', 'ASC')->findAll(),
             'penugasanAktif' => [],
             'prosesPenandatangan' => self::PROSES_PENANDATANGAN,
+            'nextKodeStandarByJenis' => $nextKodeStandarByJenis,
         ]);
     }
 
     public function simpanStandarMutu()
     {
         $rules = [
-            'kode_standar' => 'required',
             'nama_standar' => 'required',
             'jenis_standar_id' => 'required|integer',
             'kategori_standar_id' => 'required|integer',
@@ -1261,13 +1307,24 @@ class Dokumen extends BaseController
             }
         }
 
+        $jenisStandarId = (int) $this->request->getPost('jenis_standar_id');
+        $kodeStandar = trim((string) $this->request->getPost('kode_standar'));
+        if ($kodeStandar === '') {
+            $jenisStandar = (new JenisStandarModel())->find($jenisStandarId);
+            $kodeStandar = $this->generateNextStandarMutuKode($jenisStandarId, (string) ($jenisStandar['nama_jenis'] ?? ''));
+        }
+
+        if ($kodeStandar === '') {
+            return redirect()->back()->withInput()->with('error', 'Kode standar tidak valid. Pilih jenis standar terlebih dahulu.');
+        }
+
         $model = new StandarMutuModel();
         $model->save([
-            'kode_standar' => $this->request->getPost('kode_standar'),
+            'kode_standar' => $kodeStandar,
             'nama_standar' => $this->request->getPost('nama_standar'),
             'deskripsi' => $this->request->getPost('deskripsi'),
             'status_publikasi' => $statusPublikasi,
-            'jenis_standar_id' => (int) $this->request->getPost('jenis_standar_id'),
+            'jenis_standar_id' => $jenisStandarId,
             'kategori_standar_id' => (int) $this->request->getPost('kategori_standar_id'),
         ]);
 
@@ -1355,7 +1412,7 @@ class Dokumen extends BaseController
         }
 
         $model->update($id, [
-            'kode_standar' => $this->request->getPost('kode_standar'),
+            'kode_standar' => $standar['kode_standar'],
             'nama_standar' => $this->request->getPost('nama_standar'),
             'deskripsi' => $this->request->getPost('deskripsi'),
             'status_publikasi' => $statusPublikasi,

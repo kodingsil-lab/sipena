@@ -542,7 +542,7 @@ $cards = [
                         <thead>
                             <tr>
                                 <th style="width:70px;">No.</th>
-                                <th style="min-width:130px;">Nomor</th>
+                                <th style="min-width:130px;">Kode Standar</th>
                                 <th class="dash-col-judul">Judul Dokumen</th>
                                 <th class="dash-col-jenis">Jenis Standar</th>
                                 <th class="dash-col-jenis">Kategori</th>
