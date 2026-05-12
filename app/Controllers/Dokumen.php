@@ -368,6 +368,19 @@ class Dokumen extends BaseController
         }
     }
 
+    private function sinkronStatusDokumenStandar(int $standarId, string $statusPublikasi): void
+    {
+        if ($standarId <= 0) {
+            return;
+        }
+
+        $status = $this->statusFilterValue($statusPublikasi) ?: 'draft';
+        (new DokumenStandarModel())
+            ->where('standar_mutu_id', $standarId)
+            ->set(['status_publikasi' => $status])
+            ->update();
+    }
+
     private function validasiPenandatanganTersimpanUntukPublish(int $standarId): ?string
     {
         if ($standarId <= 0) {
@@ -1442,6 +1455,7 @@ class Dokumen extends BaseController
         ]);
 
         $this->simpanPenugasanPenandatanganStandar((int) $id);
+        $this->sinkronStatusDokumenStandar((int) $id, $statusPublikasi);
 
         return redirect()->to('/standar-mutu')->with('success', 'Data standar mutu berhasil diperbarui.');
     }
