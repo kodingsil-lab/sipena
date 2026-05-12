@@ -17,6 +17,7 @@ $publicActiveMenu = strtolower(trim((string) ($publicActiveMenu ?? 'dashboard'))
 $isLoggedIn = (bool) session()->get('is_logged_in');
 
 $roleRaw = strtolower(trim((string) session('role')));
+$isAdminRole = $roleRaw === 'admin';
 $jabatanSession = trim((string) session('jabatan'));
 $jabatanLabel = $jabatanSession !== '' ? $jabatanSession : match ($roleRaw) {
     'admin' => 'Admin',
@@ -1099,6 +1100,7 @@ $jabatanLabel = $jabatanSession !== '' ? $jabatanSession : match ($roleRaw) {
                     </a>
                 </li>
 
+                <?php if ($isAdminRole): ?>
                 <li class="nav-item dropdown">
                     <a class="nav-link menu-link dropdown-toggle <?= $seg1 === 'master-data' ? 'active' : ''; ?>" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="bi bi-database-fill menu-icon"></i>Master Data
@@ -1119,6 +1121,7 @@ $jabatanLabel = $jabatanSession !== '' ? $jabatanSession : match ($roleRaw) {
                         <li><a class="dropdown-item" href="<?= base_url('/pengaturan/aplikasi'); ?>">Aplikasi</a></li>
                     </ul>
                 </li>
+                <?php endif; ?>
                 <?php endif; ?>
 
             </ul>

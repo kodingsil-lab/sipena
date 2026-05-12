@@ -3,6 +3,7 @@
 <?= $this->section('content'); ?>
 
 <?php
+$canEditDokumen = in_array(strtolower((string) session('role')), ['admin', 'kepala_lpm'], true);
 $pdfUrl = '';
 if (! empty($peraturan['file_pdf'])) {
     $pdfUrl = base_url('/uploads/peraturan/' . rawurlencode($peraturan['file_pdf']));
@@ -16,7 +17,9 @@ if (! empty($peraturan['file_pdf'])) {
             <p class="page-subtitle mb-0"><?= esc($pageDesc ?? ''); ?></p>
         </div>
         <div class="d-flex gap-2 flex-wrap">
-            <a href="<?= base_url('/peraturan/edit/' . $peraturan['id']); ?>" class="btn btn-warning">Edit</a>
+            <?php if ($canEditDokumen): ?>
+                <a href="<?= base_url('/peraturan/edit/' . $peraturan['id']); ?>" class="btn btn-warning">Edit</a>
+            <?php endif; ?>
             <a href="<?= base_url('/peraturan'); ?>" class="btn btn-secondary">Kembali</a>
         </div>
     </div>

@@ -2,16 +2,20 @@
 
 <?= $this->section('content'); ?>
 
+<?php $canEditDokumen = in_array(strtolower((string) session('role')), ['admin', 'kepala_lpm'], true); ?>
+
 <div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-3">
     <div>
         <h1 class="page-title"><?= esc($pageTitle ?? 'Pedoman PPEPP'); ?></h1>
         <p class="page-subtitle"><?= esc($pageDesc ?? ''); ?></p>
     </div>
+    <?php if ($canEditDokumen): ?>
     <div>
         <a href="<?= base_url('/pedoman-ppepp/tambah?jenis=' . urlencode($jenisDokumen ?? 'Dokumen PPEPP')); ?>" class="btn btn-primary">
             Tambah <?= esc($pageTitle ?? 'Dokumen'); ?>
         </a>
     </div>
+    <?php endif; ?>
 </div>
 
 <?php if (session()->getFlashdata('success')): ?>
@@ -102,16 +106,18 @@
                                         <a href="<?= base_url('/pedoman-ppepp/detail/' . $item['id']); ?>" class="action-icon-btn action-view" data-bs-toggle="tooltip" title="Detail" aria-label="Detail">
                                             <i class="bi bi-eye"></i>
                                         </a>
-                                        <a href="<?= base_url('/pedoman-ppepp/edit/' . $item['id']); ?>" class="action-icon-btn action-edit" data-bs-toggle="tooltip" title="Edit" aria-label="Edit">
-                                            <i class="bi bi-pencil-square"></i>
-                                        </a>
+                                        <?php if ($canEditDokumen): ?>
+                                            <a href="<?= base_url('/pedoman-ppepp/edit/' . $item['id']); ?>" class="action-icon-btn action-edit" data-bs-toggle="tooltip" title="Edit" aria-label="Edit">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </a>
 
-                                        <form action="<?= base_url('/pedoman-ppepp/hapus/' . $item['id']); ?>" method="post" class="d-inline">
-                                            <?= csrf_field(); ?>
-                                            <button type="submit" class="action-icon-btn action-delete" data-bs-toggle="tooltip" title="Hapus" aria-label="Hapus" onclick="return confirm('Yakin hapus data ini?')">
-                                                <i class="bi bi-trash3"></i>
-                                            </button>
-                                        </form>
+                                            <form action="<?= base_url('/pedoman-ppepp/hapus/' . $item['id']); ?>" method="post" class="d-inline">
+                                                <?= csrf_field(); ?>
+                                                <button type="submit" class="action-icon-btn action-delete" data-bs-toggle="tooltip" title="Hapus" aria-label="Hapus" onclick="return confirm('Yakin hapus data ini?')">
+                                                    <i class="bi bi-trash3"></i>
+                                                </button>
+                                            </form>
+                                        <?php endif; ?>
                                     </div>
                                 </td>
                             </tr>

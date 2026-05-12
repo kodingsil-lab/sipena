@@ -2,6 +2,8 @@
 
 <?= $this->section('content'); ?>
 
+<?php $canEditDokumen = in_array(strtolower((string) session('role')), ['admin', 'kepala_lpm'], true); ?>
+
 <?php
 $pdfUrl = '';
 if (! empty($kebijakan['file_pdf'])) {
@@ -16,7 +18,9 @@ if (! empty($kebijakan['file_pdf'])) {
             <p class="page-subtitle mb-0"><?= esc($pageDesc ?? ''); ?></p>
         </div>
         <div class="d-flex gap-2 flex-wrap">
-            <a href="<?= base_url('/kebijakan-spmi/edit/' . $kebijakan['id']); ?>" class="btn btn-warning">Edit</a>
+            <?php if ($canEditDokumen): ?>
+                <a href="<?= base_url('/kebijakan-spmi/edit/' . $kebijakan['id']); ?>" class="btn btn-warning">Edit</a>
+            <?php endif; ?>
             <a href="<?= base_url('/kebijakan-spmi'); ?>" class="btn btn-secondary">Kembali</a>
         </div>
     </div>

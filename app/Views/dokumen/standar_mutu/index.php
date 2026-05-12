@@ -2,14 +2,18 @@
 
 <?= $this->section('content'); ?>
 
+<?php $canEditDokumen = in_array(strtolower((string) session('role')), ['admin', 'kepala_lpm'], true); ?>
+
 <div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-3">
     <div>
         <h1 class="page-title"><?= esc($pageTitle ?? 'Standar Mutu'); ?></h1>
         <p class="page-subtitle"><?= esc($pageDesc ?? ''); ?></p>
     </div>
+    <?php if ($canEditDokumen): ?>
     <div>
         <a href="<?= base_url('/standar-mutu/tambah'); ?>" class="btn btn-primary">Tambah Standar</a>
     </div>
+    <?php endif; ?>
 </div>
 
 <?php if (session()->getFlashdata('success')): ?>
@@ -127,16 +131,20 @@
                                             <a href="<?= base_url('/dokumen-standar/detail/' . $dokumenUtamaId); ?>" class="action-icon-btn action-view" data-bs-toggle="tooltip" title="Preview Butir Standar" aria-label="Preview Butir Standar">
                                                 <i class="bi bi-eye"></i>
                                             </a>
-                                            <a href="<?= base_url('/dokumen-standar/edit/' . $dokumenUtamaId); ?>" class="action-icon-btn action-butir" data-bs-toggle="tooltip" title="Edit Butir Standar" aria-label="Edit Butir Standar">
-                                                <i class="bi bi-pencil-square"></i>
-                                            </a>
+                                            <?php if ($canEditDokumen): ?>
+                                                <a href="<?= base_url('/dokumen-standar/edit/' . $dokumenUtamaId); ?>" class="action-icon-btn action-butir" data-bs-toggle="tooltip" title="Edit Butir Standar" aria-label="Edit Butir Standar">
+                                                    <i class="bi bi-pencil-square"></i>
+                                                </a>
+                                            <?php endif; ?>
                                             <a href="<?= base_url('/dokumen-standar/riwayat/' . $dokumenUtamaId); ?>" class="action-icon-btn action-history" data-bs-toggle="tooltip" title="Riwayat Perubahan Butir Standar" aria-label="Riwayat Perubahan Butir Standar">
                                                 <i class="bi bi-clock-history"></i>
                                             </a>
                                         <?php else: ?>
-                                            <a href="<?= base_url('/standar-mutu/' . $item['id'] . '/dokumen/tambah'); ?>" class="action-icon-btn action-doc" data-bs-toggle="tooltip" title="Belum ada butir, tambah butir standar" aria-label="Tambah Butir Standar">
-                                                <i class="bi bi-plus-lg"></i>
-                                            </a>
+                                            <?php if ($canEditDokumen): ?>
+                                                <a href="<?= base_url('/standar-mutu/' . $item['id'] . '/dokumen/tambah'); ?>" class="action-icon-btn action-doc" data-bs-toggle="tooltip" title="Belum ada butir, tambah butir standar" aria-label="Tambah Butir Standar">
+                                                    <i class="bi bi-plus-lg"></i>
+                                                </a>
+                                            <?php endif; ?>
                                         <?php endif; ?>
                                     </div>
                                 </td>
@@ -150,16 +158,18 @@
                                         <a href="<?= base_url('/standar-mutu/detail/' . $item['id']); ?>" class="action-icon-btn action-view" data-bs-toggle="tooltip" title="Detail" aria-label="Detail">
                                             <i class="bi bi-eye"></i>
                                         </a>
-                                        <a href="<?= base_url('/standar-mutu/edit/' . $item['id']); ?>" class="action-icon-btn action-edit" data-bs-toggle="tooltip" title="Edit" aria-label="Edit">
-                                            <i class="bi bi-pencil-square"></i>
-                                        </a>
+                                        <?php if ($canEditDokumen): ?>
+                                            <a href="<?= base_url('/standar-mutu/edit/' . $item['id']); ?>" class="action-icon-btn action-edit" data-bs-toggle="tooltip" title="Edit" aria-label="Edit">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </a>
 
-                                        <form action="<?= base_url('/standar-mutu/hapus/' . $item['id']); ?>" method="post" class="d-inline">
-                                            <?= csrf_field(); ?>
-                                            <button type="submit" class="action-icon-btn action-delete" data-bs-toggle="tooltip" title="Hapus" aria-label="Hapus" onclick="return confirm('Yakin hapus data ini?')">
-                                                <i class="bi bi-trash3"></i>
-                                            </button>
-                                        </form>
+                                            <form action="<?= base_url('/standar-mutu/hapus/' . $item['id']); ?>" method="post" class="d-inline">
+                                                <?= csrf_field(); ?>
+                                                <button type="submit" class="action-icon-btn action-delete" data-bs-toggle="tooltip" title="Hapus" aria-label="Hapus" onclick="return confirm('Yakin hapus data ini?')">
+                                                    <i class="bi bi-trash3"></i>
+                                                </button>
+                                            </form>
+                                        <?php endif; ?>
                                     </div>
                                 </td>
                             </tr>

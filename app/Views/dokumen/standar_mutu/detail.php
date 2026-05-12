@@ -2,13 +2,17 @@
 
 <?= $this->section('content'); ?>
 
+<?php $canEditDokumen = in_array(strtolower((string) session('role')), ['admin', 'kepala_lpm'], true); ?>
+
 <div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-3">
     <div>
         <h1 class="page-title"><?= esc($pageTitle ?? 'Detail Standar Mutu'); ?></h1>
         <p class="page-subtitle"><?= esc($pageDesc ?? ''); ?></p>
     </div>
     <div class="d-grid gap-2 d-md-block">
-        <a href="<?= base_url('/standar-mutu/edit/' . $standar['id']); ?>" class="btn btn-warning">Edit</a>
+        <?php if ($canEditDokumen): ?>
+            <a href="<?= base_url('/standar-mutu/edit/' . $standar['id']); ?>" class="btn btn-warning">Edit</a>
+        <?php endif; ?>
         <a href="<?= base_url('/standar-mutu'); ?>" class="btn btn-secondary">Kembali</a>
     </div>
 </div>

@@ -2,6 +2,8 @@
 
 <?= $this->section('content'); ?>
 
+<?php $canEditDokumen = in_array(strtolower((string) session('role')), ['admin', 'kepala_lpm'], true); ?>
+
 <nav aria-label="breadcrumb" class="mb-3">
     <ol class="breadcrumb mb-0">
         <li class="breadcrumb-item"><a href="<?= base_url('/standar-mutu'); ?>">Standar Mutu</a></li>
@@ -18,7 +20,9 @@
         </div>
     </div>
     <div class="d-grid gap-2 d-md-block">
-        <a href="<?= base_url('/standar-mutu/' . $standar['id'] . '/dokumen/tambah'); ?>" class="btn btn-primary">Tambah Dokumen</a>
+        <?php if ($canEditDokumen): ?>
+            <a href="<?= base_url('/standar-mutu/' . $standar['id'] . '/dokumen/tambah'); ?>" class="btn btn-primary">Tambah Dokumen</a>
+        <?php endif; ?>
         <a href="<?= base_url('/standar-mutu'); ?>" class="btn btn-secondary">Kembali ke Standar</a>
     </div>
 </div>
@@ -93,16 +97,18 @@
                                 </td>
                                 <td class="text-center">
                                     <div class="action-buttons">
-                                        <a href="<?= base_url('/dokumen-standar/edit/' . $item['id']); ?>" class="action-icon-btn action-edit" data-bs-toggle="tooltip" title="Edit" aria-label="Edit">
-                                            <i class="bi bi-pencil-square"></i>
-                                        </a>
+                                        <?php if ($canEditDokumen): ?>
+                                            <a href="<?= base_url('/dokumen-standar/edit/' . $item['id']); ?>" class="action-icon-btn action-edit" data-bs-toggle="tooltip" title="Edit" aria-label="Edit">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </a>
 
-                                        <form action="<?= base_url('/dokumen-standar/hapus/' . $item['id']); ?>" method="post" class="d-inline">
-                                            <?= csrf_field(); ?>
-                                            <button type="submit" class="action-icon-btn action-delete" data-bs-toggle="tooltip" title="Hapus" aria-label="Hapus" onclick="return confirm('Yakin hapus dokumen ini?')">
-                                                <i class="bi bi-trash3"></i>
-                                            </button>
-                                        </form>
+                                            <form action="<?= base_url('/dokumen-standar/hapus/' . $item['id']); ?>" method="post" class="d-inline">
+                                                <?= csrf_field(); ?>
+                                                <button type="submit" class="action-icon-btn action-delete" data-bs-toggle="tooltip" title="Hapus" aria-label="Hapus" onclick="return confirm('Yakin hapus dokumen ini?')">
+                                                    <i class="bi bi-trash3"></i>
+                                                </button>
+                                            </form>
+                                        <?php endif; ?>
 
                                         <div class="dropdown d-inline-block">
                                             <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
