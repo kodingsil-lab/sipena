@@ -165,7 +165,26 @@ class Dokumen extends BaseController
             return 'PKM';
         }
 
-        return '';
+        $words = preg_split('/[^A-Za-z0-9]+/', trim($namaJenis));
+        if (! is_array($words)) {
+            return '';
+        }
+
+        $prefix = '';
+        foreach ($words as $word) {
+            $word = trim($word);
+            if ($word === '') {
+                continue;
+            }
+
+            $prefix .= strtoupper(substr($word, 0, 1));
+        }
+
+        if ($prefix === '' && trim($namaJenis) !== '') {
+            $prefix = strtoupper(substr(preg_replace('/[^A-Za-z0-9]/', '', $namaJenis) ?? '', 0, 3));
+        }
+
+        return substr($prefix, 0, 4);
     }
 
     private function generateNextStandarMutuKode(int $jenisStandarId, string $namaJenis): string
