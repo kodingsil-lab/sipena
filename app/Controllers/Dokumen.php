@@ -503,13 +503,23 @@ class Dokumen extends BaseController
         return $result;
     }
 
-    public function peraturan()
+    public function peraturanKategori(string $slug)
+    {
+        $kategori = $this->kategoriPeraturanDariSlug($slug);
+        if ($kategori === '') {
+            throw PageNotFoundException::forPageNotFound('Kategori peraturan tidak ditemukan.');
+        }
+
+        return $this->peraturan($kategori);
+    }
+
+    public function peraturan(string $kategoriPreset = '')
     {
         $model = new PeraturanModel();
         $perPage = $this->resolvePerPage();
 
         $status = $this->statusFilterValue(trim((string) $this->request->getGet('status')));
-        $kategori = trim((string) $this->request->getGet('kategori'));
+        $kategori = trim($kategoriPreset) !== '' ? trim($kategoriPreset) : trim((string) $this->request->getGet('kategori'));
         $keyword = trim((string) $this->request->getGet('keyword'));
 
         $daftarKategori = ['Landasan Hukum', 'Peraturan Dikti', 'Peraturan Rektor'];
@@ -551,6 +561,17 @@ class Dokumen extends BaseController
             'daftarStatus' => self::STATUS_OPTIONS,
             'daftarKategori' => $daftarKategori,
         ]);
+    }
+
+    private function kategoriPeraturanDariSlug(string $slug): string
+    {
+        $map = [
+            'landasan-hukum' => 'Landasan Hukum',
+            'peraturan-dikti' => 'Peraturan Dikti',
+            'peraturan-rektor' => 'Peraturan Rektor',
+        ];
+
+        return $map[strtolower(trim($slug))] ?? '';
     }
 
     public function tambahPeraturan()

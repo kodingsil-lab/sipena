@@ -27,6 +27,9 @@ $routes->group('api/v1', static function ($routes) {
 $routes->get('/dashboard', 'Dashboard::index', ['filter' => 'auth']);
 $routes->get('/profil', 'ProfilController::index', ['filter' => 'auth']);
 $routes->post('/profil/update', 'ProfilController::update', ['filter' => 'auth']);
+$routes->get('/landasan-hukum', 'Dokumen::peraturanKategori/landasan-hukum', ['filter' => 'auth']);
+$routes->get('/peraturan-dikti', 'Dokumen::peraturanKategori/peraturan-dikti', ['filter' => 'auth']);
+$routes->get('/peraturan-rektor', 'Dokumen::peraturanKategori/peraturan-rektor', ['filter' => 'auth']);
 $routes->get('/peraturan', 'Dokumen::peraturan', ['filter' => 'auth']);
 $routes->get('/peraturan/tambah', 'Dokumen::tambahPeraturan', ['filter' => 'editor']);
 $routes->post('/peraturan/simpan', 'Dokumen::simpanPeraturan', ['filter' => 'editor']);
@@ -85,16 +88,16 @@ $routes->get('/audit-mutu-internal/edit/(:num)', 'Dokumen::editAmi/$1', ['filter
 $routes->post('/audit-mutu-internal/update/(:num)', 'Dokumen::updateAmi/$1', ['filter' => 'editor']);
 $routes->post('/audit-mutu-internal/hapus/(:num)', 'Dokumen::hapusAmi/$1', ['filter' => 'editor']);
 
-$routes->get('/master-data/jenis-standar', 'MasterStandar::jenisStandar', ['filter' => 'admin']);
-$routes->post('/master-data/jenis-standar/simpan', 'MasterStandar::simpanJenisStandar', ['filter' => 'admin']);
-$routes->get('/master-data/jenis-standar/edit/(:num)', 'MasterStandar::editJenisStandar/$1', ['filter' => 'admin']);
-$routes->post('/master-data/jenis-standar/update/(:num)', 'MasterStandar::updateJenisStandar/$1', ['filter' => 'admin']);
-$routes->post('/master-data/jenis-standar/hapus/(:num)', 'MasterStandar::hapusJenisStandar/$1', ['filter' => 'admin']);
-$routes->get('/master-data/kategori-standar', 'MasterStandar::kategoriStandar', ['filter' => 'admin']);
-$routes->post('/master-data/kategori-standar/simpan', 'MasterStandar::simpanKategoriStandar', ['filter' => 'admin']);
-$routes->get('/master-data/kategori-standar/edit/(:num)', 'MasterStandar::editKategoriStandar/$1', ['filter' => 'admin']);
-$routes->post('/master-data/kategori-standar/update/(:num)', 'MasterStandar::updateKategoriStandar/$1', ['filter' => 'admin']);
-$routes->post('/master-data/kategori-standar/hapus/(:num)', 'MasterStandar::hapusKategoriStandar/$1', ['filter' => 'admin']);
+$routes->get('/master-data/jenis-standar', 'MasterStandar::jenisStandar', ['filter' => 'masterData']);
+$routes->post('/master-data/jenis-standar/simpan', 'MasterStandar::simpanJenisStandar', ['filter' => 'masterData']);
+$routes->get('/master-data/jenis-standar/edit/(:num)', 'MasterStandar::editJenisStandar/$1', ['filter' => 'masterData']);
+$routes->post('/master-data/jenis-standar/update/(:num)', 'MasterStandar::updateJenisStandar/$1', ['filter' => 'masterData']);
+$routes->post('/master-data/jenis-standar/hapus/(:num)', 'MasterStandar::hapusJenisStandar/$1', ['filter' => 'masterData']);
+$routes->get('/master-data/kategori-standar', 'MasterStandar::kategoriStandar', ['filter' => 'masterData']);
+$routes->post('/master-data/kategori-standar/simpan', 'MasterStandar::simpanKategoriStandar', ['filter' => 'masterData']);
+$routes->get('/master-data/kategori-standar/edit/(:num)', 'MasterStandar::editKategoriStandar/$1', ['filter' => 'masterData']);
+$routes->post('/master-data/kategori-standar/update/(:num)', 'MasterStandar::updateKategoriStandar/$1', ['filter' => 'masterData']);
+$routes->post('/master-data/kategori-standar/hapus/(:num)', 'MasterStandar::hapusKategoriStandar/$1', ['filter' => 'masterData']);
 
 $routes->get('/pengaturan/profil-institusi', 'MasterStandar::profilInstitusi', ['filter' => 'admin']);
 $routes->post('/pengaturan/profil-institusi/simpan', 'MasterStandar::simpanProfilInstitusi', ['filter' => 'admin']);

@@ -252,6 +252,7 @@ class MasterUser extends BaseController
     {
         return [
             'admin'       => 'Admin',
+            'lpm'         => 'LPM',
             'kepala_lpm'  => 'Kepala LPM',
             'dosen'       => 'Dosen',
         ];

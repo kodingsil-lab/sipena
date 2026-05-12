@@ -18,9 +18,11 @@ $isLoggedIn = (bool) session()->get('is_logged_in');
 
 $roleRaw = strtolower(trim((string) session('role')));
 $isAdminRole = $roleRaw === 'admin';
+$canAccessMasterData = in_array($roleRaw, ['admin', 'lpm', 'kepala_lpm'], true);
 $jabatanSession = trim((string) session('jabatan'));
 $jabatanLabel = $jabatanSession !== '' ? $jabatanSession : match ($roleRaw) {
     'admin' => 'Admin',
+    'lpm' => 'LPM',
     'kepala_lpm' => 'Kepala LPM',
     default => 'Pengguna',
 };
@@ -1062,13 +1064,13 @@ $jabatanLabel = $jabatanSession !== '' ? $jabatanSession : match ($roleRaw) {
                 </li>
 
                 <li class="nav-item dropdown">
-                    <a class="nav-link menu-link dropdown-toggle <?= $seg1 === 'peraturan' ? 'active' : ''; ?>" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a class="nav-link menu-link dropdown-toggle <?= in_array($seg1, ['peraturan', 'landasan-hukum', 'peraturan-dikti', 'peraturan-rektor'], true) ? 'active' : ''; ?>" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="bi bi-book-fill menu-icon"></i>Peraturan
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="<?= base_url('/peraturan?kategori=Landasan%20Hukum'); ?>">Landasan Hukum</a></li>
-                        <li><a class="dropdown-item" href="<?= base_url('/peraturan?kategori=Peraturan%20Dikti'); ?>">Peraturan Dikti</a></li>
-                        <li><a class="dropdown-item" href="<?= base_url('/peraturan?kategori=Peraturan%20Rektor'); ?>">Peraturan Rektor</a></li>
+                        <li><a class="dropdown-item" href="<?= base_url('/landasan-hukum'); ?>">Landasan Hukum</a></li>
+                        <li><a class="dropdown-item" href="<?= base_url('/peraturan-dikti'); ?>">Peraturan Dikti</a></li>
+                        <li><a class="dropdown-item" href="<?= base_url('/peraturan-rektor'); ?>">Peraturan Rektor</a></li>
                     </ul>
                 </li>
 
@@ -1100,7 +1102,7 @@ $jabatanLabel = $jabatanSession !== '' ? $jabatanSession : match ($roleRaw) {
                     </a>
                 </li>
 
-                <?php if ($isAdminRole): ?>
+                <?php if ($canAccessMasterData): ?>
                 <li class="nav-item dropdown">
                     <a class="nav-link menu-link dropdown-toggle <?= $seg1 === 'master-data' ? 'active' : ''; ?>" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="bi bi-database-fill menu-icon"></i>Master Data
@@ -1110,7 +1112,9 @@ $jabatanLabel = $jabatanSession !== '' ? $jabatanSession : match ($roleRaw) {
                         <li><a class="dropdown-item" href="<?= base_url('/master-data/kategori-standar'); ?>">Kategori Standar</a></li>
                     </ul>
                 </li>
+                <?php endif; ?>
 
+                <?php if ($isAdminRole): ?>
                 <li class="nav-item dropdown">
                     <a class="nav-link menu-link dropdown-toggle <?= $seg1 === 'pengaturan' ? 'active' : ''; ?>" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="bi bi-gear-fill menu-icon"></i>Pengaturan
