@@ -114,13 +114,17 @@ class PublicPortal extends BaseController
         $dokumenModel = new DokumenStandarModel();
         $standarModel = new StandarMutuModel();
         $pedomanModel = new PedomanPpeppModel();
+        $totalDokumenBuilder = $dokumenModel
+            ->join('standar_mutu', 'standar_mutu.id = dokumen_standar.standar_mutu_id', 'left');
+        $this->applyStandarTerbitFilter($totalDokumenBuilder);
+        $totalDokumenStandarTerbit = $totalDokumenBuilder->countAllResults();
 
         return [
             'publicMode' => true,
             'publicActiveMenu' => $activeMenu,
             'totalStandar' => $standarModel->where('status_publikasi', self::STATUS_TERBIT)->countAllResults(),
-            'totalDokumen' => $dokumenModel->where('status_publikasi', self::STATUS_TERBIT)->countAllResults(),
-            'totalPublishDokumen' => $dokumenModel->where('status_publikasi', self::STATUS_TERBIT)->countAllResults(),
+            'totalDokumen' => $totalDokumenStandarTerbit,
+            'totalPublishDokumen' => $totalDokumenStandarTerbit,
             'totalSop' => $pedomanModel
                 ->where('status_publikasi', self::STATUS_TERBIT)
                 ->where('jenis_dokumen', 'SOP')
@@ -149,6 +153,19 @@ class PublicPortal extends BaseController
             }
         }
         $builder->groupEnd();
+    }
+
+    private function applyStandarTerbitFilter(object $builder): void
+    {
+        $builder->groupStart()
+            ->where('standar_mutu.status_publikasi', self::STATUS_TERBIT)
+            ->orWhere('dokumen_standar.status_publikasi', self::STATUS_TERBIT)
+            ->groupEnd();
+    }
+
+    private function standarStatusPublikasiSelect(): string
+    {
+        return "CASE WHEN standar_mutu.status_publikasi = '" . self::STATUS_TERBIT . "' OR dokumen_standar.status_publikasi = '" . self::STATUS_TERBIT . "' THEN '" . self::STATUS_TERBIT . "' ELSE 'draft' END AS status_publikasi";
     }
 
     private function latestStamp(array $row): string
@@ -184,11 +201,12 @@ class PublicPortal extends BaseController
         $kategoriStandarId = (int) $this->request->getGet('kategori_standar_id');
 
         $builder = (new DokumenStandarModel())
-            ->select('dokumen_standar.id, dokumen_standar.kode_dokumen, standar_mutu.kode_standar, dokumen_standar.status_publikasi, dokumen_standar.updated_at, dokumen_standar.created_at, standar_mutu.nama_standar, master_jenis_standar.nama_jenis, master_kategori_standar.nama_kategori')
+            ->select('dokumen_standar.id, dokumen_standar.kode_dokumen, standar_mutu.kode_standar, dokumen_standar.updated_at, dokumen_standar.created_at, standar_mutu.nama_standar, master_jenis_standar.nama_jenis, master_kategori_standar.nama_kategori')
+            ->select($this->standarStatusPublikasiSelect(), false)
             ->join('standar_mutu', 'standar_mutu.id = dokumen_standar.standar_mutu_id', 'left')
             ->join('master_jenis_standar', 'master_jenis_standar.id = standar_mutu.jenis_standar_id', 'left')
-            ->join('master_kategori_standar', 'master_kategori_standar.id = standar_mutu.kategori_standar_id', 'left')
-            ->where('dokumen_standar.status_publikasi', self::STATUS_TERBIT);
+            ->join('master_kategori_standar', 'master_kategori_standar.id = standar_mutu.kategori_standar_id', 'left');
+        $this->applyStandarTerbitFilter($builder);
 
         $this->applyKeyword($builder, $keyword, ['dokumen_standar.kode_dokumen', 'standar_mutu.nama_standar']);
         if ($jenisStandarId > 0) {
@@ -376,11 +394,12 @@ class PublicPortal extends BaseController
 
         $model = new DokumenStandarModel();
         $builder = $model
-            ->select('dokumen_standar.id, dokumen_standar.kode_dokumen, standar_mutu.kode_standar, dokumen_standar.status_publikasi, dokumen_standar.updated_at, dokumen_standar.created_at, standar_mutu.nama_standar, master_jenis_standar.nama_jenis, master_kategori_standar.nama_kategori')
+            ->select('dokumen_standar.id, dokumen_standar.kode_dokumen, standar_mutu.kode_standar, dokumen_standar.updated_at, dokumen_standar.created_at, standar_mutu.nama_standar, master_jenis_standar.nama_jenis, master_kategori_standar.nama_kategori')
+            ->select($this->standarStatusPublikasiSelect(), false)
             ->join('standar_mutu', 'standar_mutu.id = dokumen_standar.standar_mutu_id', 'left')
             ->join('master_jenis_standar', 'master_jenis_standar.id = standar_mutu.jenis_standar_id', 'left')
-            ->join('master_kategori_standar', 'master_kategori_standar.id = standar_mutu.kategori_standar_id', 'left')
-            ->where('dokumen_standar.status_publikasi', self::STATUS_TERBIT);
+            ->join('master_kategori_standar', 'master_kategori_standar.id = standar_mutu.kategori_standar_id', 'left');
+        $this->applyStandarTerbitFilter($builder);
         $this->applyKeyword($builder, $keyword, ['dokumen_standar.kode_dokumen', 'standar_mutu.nama_standar']);
 
         if ($jenisStandarId > 0) {
@@ -457,7 +476,11 @@ class PublicPortal extends BaseController
         $dokumenModel = new DokumenStandarModel();
         $standarModel = new StandarMutuModel();
 
-        $dokumen = $dokumenModel->where('status_publikasi', self::STATUS_TERBIT)->find($id);
+        $dokumen = $dokumenModel
+            ->select('dokumen_standar.*')
+            ->join('standar_mutu', 'standar_mutu.id = dokumen_standar.standar_mutu_id', 'left');
+        $this->applyStandarTerbitFilter($dokumen);
+        $dokumen = $dokumen->find($id);
         if (! $dokumen) {
             throw PageNotFoundException::forPageNotFound('Dokumen standar tidak ditemukan.');
         }
