@@ -149,7 +149,7 @@ class StandarApiController extends BaseController
                 dokumen_standar.revisi,
                 dokumen_standar.halaman,
                 dokumen_standar.indikator_ketercapaian,
-                dokumen_standar.status_publikasi,
+                CASE WHEN standar_mutu.status_publikasi = "publish" OR dokumen_standar.status_publikasi = "publish" THEN "publish" ELSE "draft" END AS status_publikasi,
                 dokumen_standar.updated_at,
                 dokumen_standar.created_at,
                 standar_mutu.kode_standar,
@@ -162,7 +162,10 @@ class StandarApiController extends BaseController
             ->join('standar_mutu', 'standar_mutu.id = dokumen_standar.standar_mutu_id', 'left')
             ->join('master_jenis_standar', 'master_jenis_standar.id = standar_mutu.jenis_standar_id', 'left')
             ->join('master_kategori_standar', 'master_kategori_standar.id = standar_mutu.kategori_standar_id', 'left')
-            ->where('dokumen_standar.status_publikasi', self::STATUS_TERBIT);
+            ->groupStart()
+            ->where('standar_mutu.status_publikasi', self::STATUS_TERBIT)
+            ->orWhere('dokumen_standar.status_publikasi', self::STATUS_TERBIT)
+            ->groupEnd();
     }
 
     private function applyFilters(object $builder, string $keyword, int $jenisStandarId, int $kategoriStandarId): void
